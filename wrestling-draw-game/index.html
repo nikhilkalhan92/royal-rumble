@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWE Random Draw</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: black;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+        }
+        .btn {
+            background: red;
+            color: white;
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            margin-top: 20px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: black;
+            padding: 20px;
+            border: 3px solid red;
+            text-align: center;
+            font-size: 18px;
+        }
+        .side-popup {
+            position: fixed;
+            top: 10%;
+            right: 10px;
+            background: black;
+            padding: 15px;
+            border: 2px solid red;
+            width: 300px;
+            height: auto;
+            text-align: left;
+            font-size: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .background-image {
+            position: fixed;
+            top: 10%;
+            left: 10px;
+            width: 500px;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            display: none;
+            border: 2px solid red;
+            background: black;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WWE Random Draw</h1>
+        <button class="btn" onclick="drawNext()">Draw</button>
+        <div id="popup" class="popup"></div>
+        <div id="side-popup" class="side-popup"><h3>Drawn Numbers</h3><div id="drawn-list"></div></div>
+        <img id="background-image" class="background-image" src="" alt="Drawn Person">
+    </div>
+    
+    <script>
+        const backgrounds = {
+            "AL Snow": "images/al_snow.JPG",
+            "Ryan Broadbent": "images/ryan_broadbent.JPG",
+            "Ryan Cucksey": "images/ringo_starr.jpg",
+            "Phillip SeyMour Hoffman": "images/phillip_seymour_hoffman.JPG",
+            "Mark Pratt": "images/mark_pratt.jpg",
+            "Alister Mackintosh": "images/alister_mackintosh.JPG",
+            "Nikki Jackson": "images/Nikki_Jackson.jpg"
+        };
+
+        const names = ["AL Snow", "Ryan Broadbent", "Ryan Cucksey", "Phillip SeyMour Hoffman", "Mark Pratt", "Alister Mackintosh", "Nikki Jackson"];
+        let drawOrder = [];
+        let drawnResults = {};
+        let drawIndex = 0;
+        let numbers = Array.from({ length: 30 }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+        let shuffledNames = [...names].sort(() => Math.random() - 0.5);
+        
+        function drawNext() {
+            if (drawIndex >= 30) {
+                document.getElementById('popup').innerHTML = "<h2>THANK YOU FUCK YOU GOODBYE GOOD NIGHT GOOD NIGHT BANG</h2>";
+                document.getElementById('popup').style.display = 'block';
+                return;
+            }
+            
+            let name = shuffledNames[drawIndex % names.length];
+            let number = numbers[drawIndex];
+            drawOrder.push({ name, number });
+            
+            let popup = document.getElementById('popup');
+            popup.innerHTML = `<h2>${name}</h2><p>Number: ${number}</p>`;
+            popup.style.display = 'block';
+            
+            if (!drawnResults[name]) {
+                drawnResults[name] = [];
+            }
+            drawnResults[name].push(number);
+            
+            // Move the image to the left side and make it bigger
+            let imgElement = document.getElementById('background-image');
+            imgElement.src = backgrounds[name];
+            imgElement.style.display = 'block';
+            
+            updateSidePopup();
+            drawIndex++;
+        }
+        
+        function updateSidePopup() {
+            let drawnListHtml = "";
+            for (let name of names) {
+                drawnListHtml += `<p><strong>${name}:</strong> ${drawnResults[name] ? drawnResults[name].join(', ') : ''}</p>`;
+            }
+            document.getElementById('drawn-list').innerHTML = drawnListHtml;
+        }
+    </script>
+</body>
+</html>
